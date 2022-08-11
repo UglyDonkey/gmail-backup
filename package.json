@@ -19,7 +19,7 @@
   "dependencies": {
     "@oclif/core": "^1",
     "@oclif/plugin-help": "^5",
-    "@oclif/plugin-plugins": "^2.0.1"
+    "googleapis": "^105.0.0"
   },
   "devDependencies": {
     "@oclif/test": "^2",
@@ -42,16 +42,14 @@
     "bin": "gmail-backup",
     "dirname": "gmail-backup",
     "commands": "./dist/commands",
+    "hooks": {
+      "prerun": "./src/hooks/prerun"
+    },
     "plugins": [
-      "@oclif/plugin-help",
-      "@oclif/plugin-plugins"
+      "@oclif/plugin-help"
     ],
     "topicSeparator": " ",
-    "topics": {
-      "hello": {
-        "description": "Say hello to the world and others"
-      }
-    }
+    "topics": {}
   },
   "scripts": {
     "build": "shx rm -rf dist && tsc -b",
@@ -63,7 +61,7 @@
     "version": "oclif readme && git add README.md"
   },
   "engines": {
-    "node": "16.0.0"
+    "node": ">=16.0.0"
   },
   "bugs": "https://github.com/UglyDonkey/gmail-backup/issues",
   "keywords": [
