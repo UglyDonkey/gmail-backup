@@ -42,7 +42,7 @@
     "dirname": "gmail-backup",
     "commands": "./dist/commands",
     "hooks": {
-      "prerun": "./src/hooks/prerun"
+      "prerun": "./dist/hooks/prerun"
     },
     "plugins": [
       "@oclif/plugin-help"

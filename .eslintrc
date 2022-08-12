@@ -4,6 +4,8 @@
     "oclif-typescript"
   ],
   "rules": {
-    "camelcase": "off"
+    "camelcase": "off",
+    "indent": ["error", 2],
+    "padding-line-between-statements": "off"
   }
 }

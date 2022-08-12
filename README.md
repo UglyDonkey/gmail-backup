@@ -29,49 +29,8 @@ USAGE
 <!-- usagestop -->
 # Commands
 <!-- commands -->
-* [`gmail-backup hello PERSON`](#gmail-backup-hello-person)
-* [`gmail-backup hello world`](#gmail-backup-hello-world)
 * [`gmail-backup help [COMMAND]`](#gmail-backup-help-command)
-
-## `gmail-backup hello PERSON`
-
-Say hello
-
-```
-USAGE
-  $ gmail-backup hello [PERSON] -f <value>
-
-ARGUMENTS
-  PERSON  Person to say hello to
-
-FLAGS
-  -f, --from=<value>  (required) Whom is saying hello
-
-DESCRIPTION
-  Say hello
-
-EXAMPLES
-  $ oex hello friend --from oclif
-  hello friend from oclif! (./src/commands/hello/index.ts)
-```
-
-_See code: [dist/commands/hello/index.ts](https://github.com/UglyDonkey/gmail-backup/blob/v0.0.0/dist/commands/hello/index.ts)_
-
-## `gmail-backup hello world`
-
-Say hello world
-
-```
-USAGE
-  $ gmail-backup hello world
-
-DESCRIPTION
-  Say hello world
-
-EXAMPLES
-  $ oex hello world
-  hello world! (./src/commands/hello/world.ts)
-```
+* [`gmail-backup oauth`](#gmail-backup-oauth)
 
 ## `gmail-backup help [COMMAND]`
 
@@ -92,4 +51,18 @@ DESCRIPTION
 ```
 
 _See code: [@oclif/plugin-help](https://github.com/oclif/plugin-help/blob/v5.1.12/src/commands/help.ts)_
+
+## `gmail-backup oauth`
+
+Setup your google account
+
+```
+USAGE
+  $ gmail-backup oauth
+
+DESCRIPTION
+  Setup your google account
+```
+
+_See code: [dist/commands/oauth/index.ts](https://github.com/UglyDonkey/gmail-backup/blob/v0.0.0/dist/commands/oauth/index.ts)_
 <!-- commandsstop -->
