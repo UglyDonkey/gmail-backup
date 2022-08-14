@@ -20,7 +20,7 @@ $ npm install -g gmail-backup
 $ gmail-backup COMMAND
 running command...
 $ gmail-backup (--version)
-gmail-backup/0.0.0 linux-x64 node-v16.13.0
+gmail-backup/0.0.0 linux-x64 node-v18.7.0
 $ gmail-backup --help [COMMAND]
 USAGE
   $ gmail-backup COMMAND
@@ -31,6 +31,7 @@ USAGE
 <!-- commands -->
 * [`gmail-backup help [COMMAND]`](#gmail-backup-help-command)
 * [`gmail-backup oauth`](#gmail-backup-oauth)
+* [`gmail-backup snapshot create`](#gmail-backup-snapshot-create)
 
 ## `gmail-backup help [COMMAND]`
 
@@ -65,4 +66,16 @@ DESCRIPTION
 ```
 
 _See code: [dist/commands/oauth/index.ts](https://github.com/UglyDonkey/gmail-backup/blob/v0.0.0/dist/commands/oauth/index.ts)_
+
+## `gmail-backup snapshot create`
+
+creates new snapshot
+
+```
+USAGE
+  $ gmail-backup snapshot create
+
+DESCRIPTION
+  creates new snapshot
+```
 <!-- commandsstop -->

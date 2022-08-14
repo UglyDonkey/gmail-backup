@@ -6,6 +6,11 @@
   "rules": {
     "camelcase": "off",
     "indent": ["error", 2],
-    "padding-line-between-statements": "off"
+    "padding-line-between-statements": "off",
+    "unicorn/no-array-callback-reference": "off",
+    "unicorn/no-array-for-each": "off",
+    "no-useless-constructor": "off",
+    "@typescript-eslint/no-useless-constructor": ["error"],
+    "no-await-in-loop": "off"
   }
 }

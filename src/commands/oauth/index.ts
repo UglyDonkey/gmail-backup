@@ -1,5 +1,5 @@
 import {CliUx, Command} from '@oclif/core'
-import {generateAuthUrl, getCredentials} from '../../google/oauth'
+import {generateAuthUrl, prepareCredentials} from '../../google/oauth'
 import {saveCredentials} from '../../data/credentials'
 
 export default class OAuth extends Command {
@@ -14,7 +14,7 @@ export default class OAuth extends Command {
 
     const url: string = await CliUx.ux.prompt('Paste url from browser nav bar', {required: true})
 
-    const credentials = await getCredentials(url)
+    const credentials = await prepareCredentials(url)
     await saveCredentials(credentials)
 
     CliUx.ux.info('Account successfully added')

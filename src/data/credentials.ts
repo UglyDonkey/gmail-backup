@@ -1,16 +1,22 @@
 import {Auth} from 'googleapis'
 import * as fs from 'node:fs/promises'
 
+const CREDENTIALS_PATH = 'data/secrets/credentials.json'
+
+export async function getCredentials(): Promise<Auth.Credentials[]> {
+  try {
+    const buffer = await fs.readFile(CREDENTIALS_PATH)
+    return JSON.parse(buffer.toString())
+  } catch (error: any) {
+    if (error.code === 'ENOENT') {
+      return []
+    }
+    throw error
+  }
+}
+
 export async function saveCredentials(credentials: Auth.Credentials): Promise<void> {
-  const CREDENTIALS_PATH = 'data/secrets/credentials.json'
-  const allCredentials: Auth.Credentials[] = await fs.readFile(CREDENTIALS_PATH)
-    .then(buffer => JSON.parse(buffer.toString()))
-    .catch(error => {
-      if (error.code === 'ENOENT') {
-        return []
-      }
-      throw error
-    })
+  const allCredentials = await getCredentials()
 
   allCredentials.push(credentials)
 
