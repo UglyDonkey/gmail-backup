@@ -1,7 +1,7 @@
 import {CliUx, Command} from '@oclif/core'
 import {prepareOAuthWithCredentials} from '../../google/oauth'
 import {toGmail} from '../../google/gmail'
-import {SnapshotBuilder} from '../../data/snapshot'
+import {findLastSavedMessage, SnapshotBuilder} from '../../data/snapshot'
 
 export default class CreateSnapshot extends Command {
   static description = 'creates new snapshot '
@@ -19,7 +19,8 @@ export default class CreateSnapshot extends Command {
       CliUx.ux.info(`creating snapshot for ${profile.emailAddress}`)
       progress.start()
 
-      const emailReader = gmail.getEmailReader(total => progress.setTotal(total))
+      const lastSavedMessage = await findLastSavedMessage(profile.emailAddress)
+      const emailReader = gmail.getEmailReader(total => progress.setTotal(total), lastSavedMessage?.id ?? undefined)
 
       const snapshotWriter = await snapshot.getSnapshotWriter(profile.emailAddress, count => progress.update(count))
 

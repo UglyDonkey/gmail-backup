@@ -1,6 +1,6 @@
 import {Auth, gmail_v1, google} from 'googleapis'
 import {ReadableStream, TransformStream} from 'node:stream/web'
-import {QUEUING_STRATEGY} from '../common'
+import {QUEUING_STRATEGY, reverseStream} from '../common'
 
 export type Message = gmail_v1.Schema$Message
 export type Profile = gmail_v1.Schema$Profile
@@ -15,7 +15,7 @@ export class Gmail {
     return profile
   }
 
-  getEmailReader(setTotal?: (total: number) => void): ReadableStream<Message> {
+  getEmailReader(setTotal?: (total: number) => void, lastMessageId?: string): ReadableStream<Message> {
     let total = 0
     const mailIdsStream = new ReadableStream<string>({
       start: async controller => {
@@ -24,6 +24,11 @@ export class Gmail {
         do {
           const {data: mailIds} = await this.gmail.users.messages.list({...LIST_PARAMS, pageToken: nextPageToken})
           nextPageToken = mailIds.nextPageToken ?? undefined
+          const lastMessageIndex = mailIds.messages?.findIndex(message => message.id === lastMessageId) ?? -1
+          if (lastMessageIndex !== -1) {
+            mailIds.messages = mailIds.messages?.slice(0, lastMessageIndex)
+            nextPageToken = undefined
+          }
 
           mailIds.messages?.forEach(message => controller.enqueue(message.id!))
 
@@ -42,7 +47,7 @@ export class Gmail {
       },
     }, QUEUING_STRATEGY, QUEUING_STRATEGY)
 
-    return mailIdsStream.pipeThrough(mailStream)
+    return mailIdsStream.pipeThrough(reverseStream()).pipeThrough(mailStream)
   }
 }
 
