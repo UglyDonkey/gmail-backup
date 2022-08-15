@@ -11,6 +11,7 @@
     "unicorn/no-array-for-each": "off",
     "no-useless-constructor": "off",
     "@typescript-eslint/no-useless-constructor": ["error"],
-    "no-await-in-loop": "off"
+    "no-await-in-loop": "off",
+    "max-len": ["error", {"code": 120}]
   }
 }

@@ -24,7 +24,10 @@ export default class CreateSnapshot extends Command {
 
       const snapshotWriter = await snapshot.getSnapshotWriter(profile.emailAddress, count => progress.update(count))
 
-      await emailReader.pipeTo(snapshotWriter)
+      await Promise.all([
+        emailReader.messages.pipeTo(snapshotWriter.messages),
+        emailReader.attachments.pipeTo(snapshotWriter.attachments),
+      ])
 
       progress.stop()
     }

@@ -4,8 +4,11 @@ import {QUEUING_STRATEGY, reverseStream} from '../common'
 
 export type Message = gmail_v1.Schema$Message
 export type Profile = gmail_v1.Schema$Profile
+export type Attachment = gmail_v1.Schema$MessagePartBody
 
 const LIST_PARAMS = {userId: 'me', maxResults: 500}
+
+type MessageReadable = { messages: ReadableStream<Message>, attachments: ReadableStream<Attachment> }
 
 export class Gmail {
   constructor(private gmail: gmail_v1.Gmail) {}
@@ -15,7 +18,7 @@ export class Gmail {
     return profile
   }
 
-  getEmailReader(setTotal?: (total: number) => void, lastMessageId?: string): ReadableStream<Message> {
+  getEmailReader(setTotal?: (total: number) => void, lastMessageId?: string): MessageReadable {
     let total = 0
     const mailIdsStream = new ReadableStream<string>({
       start: async controller => {
@@ -47,7 +50,33 @@ export class Gmail {
       },
     }, QUEUING_STRATEGY, QUEUING_STRATEGY)
 
-    return mailIdsStream.pipeThrough(reverseStream()).pipeThrough(mailStream)
+    const extractAttachmentsStream = new TransformStream<Message, { messageId: string, attachmentId: string }>({
+      transform: (message, controller) => {
+        message.payload?.parts
+          ?.filter(part =>
+            part.headers?.some(header => header.name === 'Content-Disposition' && header.value === 'attachment'),
+          )
+          .map(part => part.body!.attachmentId!)
+          .forEach(attachmentId => controller.enqueue({messageId: message.id!, attachmentId}))
+      },
+    }, QUEUING_STRATEGY, QUEUING_STRATEGY)
+
+    const fetchAttachmentStream = new TransformStream<{ messageId: string, attachmentId: string }, Attachment>({
+      transform: async ({messageId, attachmentId}, controller) => {
+        const {data: attachment} = await this.gmail.users.messages.attachments.get({
+          userId: 'me',
+          messageId,
+          id: attachmentId,
+        })
+        attachment.attachmentId = attachmentId
+        controller.enqueue(attachment)
+      },
+    })
+
+    const mailStreams = mailIdsStream.pipeThrough(reverseStream()).pipeThrough(mailStream).tee()
+    const attachments = mailStreams[0].pipeThrough(extractAttachmentsStream).pipeThrough(fetchAttachmentStream)
+
+    return {messages: mailStreams[1], attachments}
   }
 }
 
