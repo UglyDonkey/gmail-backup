@@ -1,50 +1,20 @@
-import {CountQueuingStrategy, ReadableStream, WritableStream, ReadableWritablePair} from 'node:stream/web'
+import {CountQueuingStrategy, TransformStream} from 'node:stream/web'
 import fs from 'node:fs/promises'
 import {Buffer} from 'node:buffer'
 
 export const QUEUING_STRATEGY = new CountQueuingStrategy({highWaterMark: 4})
 
-export function reverseStream<T>(): ReadableWritablePair<T, T> {
+export function reverseStream<T>(): TransformStream<T, T> {
   const chunks: T[] = []
-  let sendChunks: (...args: any[]) => void
-  let cancelReadable: (e: any) => void
-  let abortWritable: (e: any) => void
 
-  const sendPromise = new Promise(resolve => {
-    sendChunks = resolve
-  })
-
-  const readable = new ReadableStream<T>({
-    start: async controller => {
-      cancelReadable = e => controller.error(e)
-      await sendPromise
-      if (chunks.length === 0) {
-        controller.close()
-      }
-    },
-    pull: controller => {
-      controller.enqueue(chunks.pop())
-      if (chunks.length === 0) {
-        controller.close()
-      }
-    },
-    cancel: reason => abortWritable(reason),
-  })
-
-  const writable = new WritableStream<T>({
-    start: controller => {
-      abortWritable = e => controller.error(e)
-    },
-    write: chunk => {
+  return new TransformStream({
+    transform: chunk => {
       chunks.push(chunk)
     },
-    close: () => {
-      sendChunks()
+    flush: controller => {
+      chunks.reverse().forEach(chunk => controller.enqueue(chunk))
     },
-    abort: reason => cancelReadable(reason),
   })
-
-  return {writable, readable}
 }
 
 export async function readLastLine(path: string): Promise<string> {
