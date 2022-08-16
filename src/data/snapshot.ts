@@ -1,5 +1,5 @@
 import fs from 'node:fs'
-import {Attachment, Message} from '../google/gmail'
+import {Message, MessageWithAttachments} from '../google/gmail'
 import {Writable} from 'node:stream'
 import {WritableStream, TransformStream} from 'node:stream/web'
 import {QUEUING_STRATEGY, readLastLine} from '../common'
@@ -7,8 +7,6 @@ import dayjs from 'dayjs'
 import utc from 'dayjs/plugin/utc'
 
 dayjs.extend(utc)
-
-type MessageWritable = { messages: WritableStream<Message>, attachments: WritableStream<Attachment> }
 
 function accountToDir(account: string) {
   return account.replace('@', '_at_')
@@ -21,11 +19,25 @@ export class SnapshotBuilder {
     this.now = dayjs.utc().format('YYYY-MM-DD_HH-mm-ss-SSS')
   }
 
-  async getSnapshotWriter(account: string, onMessageSave?: (count: number) => void): Promise<MessageWritable> {
+  async getSnapshotWriter(
+    account: string, onMessageSave?: (count: number) => void,
+  ): Promise<WritableStream<MessageWithAttachments>> {
     const dir = `data/snapshots/${this.now}/${(accountToDir(account))}`
     await fs.promises.mkdir(dir, {recursive: true})
     const fileStream = Writable.toWeb(fs.createWriteStream(`${dir}/messages.ndjson`))
+    const attachmentsFile = await fs.promises.open(`${dir}/attachments.ndjson`, 'w')
     let savedMessages = 0
+
+    const saveAttachments = new TransformStream<MessageWithAttachments, Message>({
+      transform: async ({message, attachments}, controller) => {
+        if (attachments.length > 0) {
+          const attachmentsNDJSON = attachments.map(attachment => `${JSON.stringify(attachment)}\n`).join('')
+          await attachmentsFile.writeFile(attachmentsNDJSON)
+        }
+        controller.enqueue(message)
+      },
+      flush: () => attachmentsFile.close(),
+    }, QUEUING_STRATEGY, QUEUING_STRATEGY)
 
     const ndjsonStream = new TransformStream<Message>({
       transform: (message, controller) => {
@@ -37,14 +49,12 @@ export class SnapshotBuilder {
       },
     }, QUEUING_STRATEGY, QUEUING_STRATEGY)
 
-    const attachmentStream = new WritableStream<Attachment>({
-      start: () => fs.promises.mkdir(`${dir}/attachments`, {recursive: true}),
-      write: attachment =>
-        fs.promises.writeFile(`${dir}/attachments/${attachment.attachmentId}.json`, JSON.stringify(attachment)),
-    }, QUEUING_STRATEGY)
+    saveAttachments.readable
+      .pipeThrough(ndjsonStream)
+      .pipeTo(fileStream)
+      .then()
 
-    ndjsonStream.readable.pipeTo(fileStream)
-    return {messages: ndjsonStream.writable, attachments: attachmentStream}
+    return saveAttachments.writable
   }
 }
 
