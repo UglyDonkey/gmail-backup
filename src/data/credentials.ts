@@ -1,11 +1,14 @@
 import {Auth} from 'googleapis'
 import * as fs from 'node:fs/promises'
+import {getConfig} from '../config'
 
-const CREDENTIALS_PATH = 'data/secrets/credentials.json'
+function getCredentialsPath() {
+  return `${getConfig().secretsPath}/credentials.json`
+}
 
 export async function getCredentials(): Promise<Auth.Credentials[]> {
   try {
-    const buffer = await fs.readFile(CREDENTIALS_PATH)
+    const buffer = await fs.readFile(getCredentialsPath())
     return JSON.parse(buffer.toString())
   } catch (error: any) {
     if (error.code === 'ENOENT') {
@@ -20,5 +23,5 @@ export async function saveCredentials(credentials: Auth.Credentials): Promise<vo
 
   allCredentials.push(credentials)
 
-  await fs.writeFile(CREDENTIALS_PATH, JSON.stringify(allCredentials))
+  await fs.writeFile(getCredentialsPath(), JSON.stringify(allCredentials))
 }

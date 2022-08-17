@@ -1,6 +1,7 @@
 import {Auth} from 'googleapis'
 import * as fs from 'node:fs/promises'
 import {getCredentials} from '../data/credentials'
+import {getConfig} from '../config'
 
 let oAuth2Client: Auth.OAuth2Client
 
@@ -27,7 +28,7 @@ function prepareOAuth() {
 }
 
 export async function setupOAuth(): Promise<void> {
-  const buffer = await fs.readFile('data/secrets/client_secret.json')
+  const buffer = await fs.readFile(`${getConfig().secretsPath}/client_secret.json`)
   clientConfig = JSON.parse(buffer.toString())
   oAuth2Client = prepareOAuth()
 }
