@@ -23,7 +23,6 @@ const configFromEnvs: Partial<Config> = {
 let config: Config
 
 export function setupConfig(): void {
-  console.log(process.env.NODE_ENV)
   config = Object.fromEntries([
     defaultConfig,
     ['development', 'test'].includes(`${process.env.NODE_ENV}`.toLowerCase()) ? defaultDevConfig : {},
