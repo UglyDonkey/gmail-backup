@@ -18,6 +18,9 @@ jobs:
         with:
           node-version: 18
           cache: 'yarn'
+      - run: |
+          git config --global user.email "<>"
+          git config --global user.name "GitHub Actions"
       - run: yarn install --immutable --immutable-cache
       - run: yarn version --new-version "${{ inputs.version }}"
       - run: git push --tags
