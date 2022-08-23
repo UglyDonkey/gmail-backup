@@ -23,7 +23,7 @@ jobs:
           git config --global user.name "GitHub Actions"
       - run: yarn install --immutable --immutable-cache
       - run: yarn version --new-version "${{ inputs.version }}"
-      - run: git push --all --tags
+      - run: git push --all --follow-tags
 
 
   npm-publish:
