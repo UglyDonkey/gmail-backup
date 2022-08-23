@@ -19,7 +19,7 @@ jobs:
           node-version: 18
           cache: 'yarn'
       - run: yarn install --immutable --immutable-cache
-      - run: yarn version --new-version "${inputs.version}" --no-git-tag-version
+      - run: yarn version --new-version "${{ inputs.version }}" --no-git-tag-version
       - run: git push --tags
 
 
@@ -79,6 +79,6 @@ jobs:
       - docker-publish
 
     steps:
-      - run: gh release create "v${inputs.version}" --generate-notes
+      - run: gh release create "v${{ inputs.version }}" --generate-notes
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
