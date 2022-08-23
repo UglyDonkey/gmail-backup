@@ -20,6 +20,7 @@ jobs:
           cache: 'yarn'
       - run: yarn install --immutable --immutable-cache
       - run: yarn version --new-version "${GITHUB_REF:11}" --no-git-tag-version
+      - run: yarn publish
 
 
   docker-publish:
