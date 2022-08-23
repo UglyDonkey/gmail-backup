@@ -20,7 +20,7 @@ $ npm install -g gmail-backup
 $ gmail-backup COMMAND
 running command...
 $ gmail-backup (--version)
-gmail-backup/0.1.3 linux-x64 node-v18.7.0
+gmail-backup/0.1.4 linux-x64 node-v18.7.0
 $ gmail-backup --help [COMMAND]
 USAGE
   $ gmail-backup COMMAND
