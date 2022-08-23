@@ -19,7 +19,7 @@ jobs:
           node-version: 18
           cache: 'yarn'
       - run: yarn install --immutable --immutable-cache
-      - run: yarn version --new-version "${{ inputs.version }}" --no-git-tag-version
+      - run: yarn version --new-version "${{ inputs.version }}"
       - run: git push --tags
 
 
