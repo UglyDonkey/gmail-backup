@@ -15,8 +15,11 @@ RUN mkdir -p -m a=rw /data/secrets /data/snapshots
 ENV SECRETS_PATH=/data/secrets
 ENV SNAPSHOTS_PATH=/data/snapshots
 
-RUN mkdir -m a=rw /oclif_cache
-ENV CACHE_DIR=/oclif_cache
+RUN mkdir -m a=rwx /oclif
+ENV XDG_CACHE_HOME=/oclif/.cache
+ENV XDG_CONFIG_HOME=/oclif/.config
+ENV XDG_DATA_HOME=/oclif/.data
+
 
 WORKDIR /gmail-backup
 
