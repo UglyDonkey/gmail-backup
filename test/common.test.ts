@@ -1,5 +1,7 @@
-import {reverseStream} from '../src/common'
+import mockFs from 'mock-fs'
+import {reverseStream, readLastLine} from '../src/common'
 import {expect, spy} from 'chai'
+import {before} from 'mocha'
 
 describe('common', () => {
   describe('reverseStream', () => {
@@ -98,6 +100,48 @@ describe('common', () => {
       await source.pipeThrough(reverseStream()).pipeTo(sink)
 
       expect(output).to.have.length(0)
+    })
+  })
+
+  describe('readLastLine', () => {
+    before(() => mockFs())
+    after(() => mockFs.restore())
+
+    const counts = [1, 100, 1000]
+    const widths = [1, 100, 5000]
+    const newlineAtEndOfFile = [true, false]
+    const fileName = 'file.txt'
+
+    const testParams = counts.flatMap(count => widths.flatMap(width => newlineAtEndOfFile.map(newlineAtEndOfFile =>
+      ({count, width, newlineAtEndOfFile}))),
+    )
+
+    const mockFile = (params: {count: number, width: number, newlineAtEndOfFile: boolean}) => {
+      const lines = Array
+        .from({length: params.count}, () => Array
+          .from({length: params.width}, () => Math.floor(Math.random() * 34).toString(34))
+          .join(''),
+        )
+      let content = lines
+        .join('\n')
+
+      if (params.newlineAtEndOfFile) {
+        content += '\n'
+      }
+
+      mockFs({[fileName]: content})
+      return lines[lines.length - 1]
+    }
+    testParams.forEach(params => it(`should return last line ${JSON.stringify(params)}`, async () => {
+      const lastLine = mockFile(params)
+      const result = await readLastLine(fileName)
+      expect(result).to.equal(lastLine)
+    }))
+
+    it('should return empty string when file is empty', async () => {
+      mockFs({[fileName]: ''})
+      const result = await readLastLine(fileName)
+      expect(result).to.equal('')
     })
   })
 })
