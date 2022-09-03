@@ -4,7 +4,9 @@ import {toGmail} from '../../google/gmail'
 import {findLastSavedMessage, SnapshotBuilder} from '../../data/snapshot'
 
 export default class CreateSnapshot extends Command {
-  static description = 'creates new snapshot '
+  static description =
+    'Creates new incremental snapshot in configured directory. ' +
+    'It\'s meant to be run periodically (for example with cron).'
 
   async run(): Promise<void> {
     const gmails = (await prepareOAuthWithCredentials()).map(toGmail)
