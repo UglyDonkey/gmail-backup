@@ -3,7 +3,7 @@ import {generateAuthUrl, prepareCredentials} from '../../google/oauth'
 import {saveCredentials} from '../../data/credentials'
 
 export default class OAuth extends Command {
-  static description = 'Setup your google account'
+  static description = 'Setup your google account with oauth. It supports multiple accounts.'
 
   async run(): Promise<void> {
     const authUrl = generateAuthUrl()
