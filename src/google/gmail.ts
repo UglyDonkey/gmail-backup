@@ -5,6 +5,7 @@ import {QUEUING_STRATEGY, reverseStream} from '../common'
 export type Message = gmail_v1.Schema$Message
 export type Profile = gmail_v1.Schema$Profile
 export type Attachment = gmail_v1.Schema$MessagePartBody
+export type Label =  gmail_v1.Schema$Label
 
 const LIST_PARAMS = {userId: 'me', maxResults: 500}
 
@@ -75,6 +76,11 @@ export class Gmail {
       .pipeThrough(reverseStream())
       .pipeThrough(fetchMailsStream)
       .pipeThrough(fetchAttachmentsStream)
+  }
+
+  async getLabels(): Promise<Label[]> {
+    const response = await this.gmail.users.labels.list({userId: 'me'})
+    return response.data.labels ?? []
   }
 }
 

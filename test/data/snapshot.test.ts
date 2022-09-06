@@ -4,6 +4,7 @@ import {expect, spy} from 'chai'
 import * as config from '../../src/config'
 import {SnapshotBuilder, findLastSavedMessage} from '../../src/data/snapshot'
 import fs from 'node:fs/promises'
+import {Label} from '../../src/google/gmail'
 
 describe('snapshot', () => {
   const account = 'test@gmail.com'
@@ -22,8 +23,8 @@ describe('snapshot', () => {
       const expectedSnapshotDir = `${snapshots}/${(snapshotBuilder as any).now}/${accountDir}`
 
       it('should write all messages to file', async () => {
-        const writableStream = await snapshotBuilder.getSnapshotWriter(account)
-        const writer = writableStream.getWriter()
+        const snapshotWriter = await snapshotBuilder.getSnapshotWriter(account)
+        const writer = snapshotWriter.messageWithAttachments.getWriter()
         await writer.write({message: {id: '1'}, attachments: []})
         await writer.write({message: {id: '2'}, attachments: []})
         await writer.close()
@@ -35,8 +36,8 @@ describe('snapshot', () => {
       })
 
       it('should write attachments', async () => {
-        const writableStream = await snapshotBuilder.getSnapshotWriter(account)
-        const writer = writableStream.getWriter()
+        const snapshotWriter = await snapshotBuilder.getSnapshotWriter(account)
+        const writer = snapshotWriter.messageWithAttachments.getWriter()
         await writer.write({message: {id: '1'}, attachments: [{attachmentId: '3'}, {attachmentId: '4'}]})
         await writer.write({message: {id: '2'}, attachments: [{attachmentId: '5'}]})
         await writer.close()
@@ -45,6 +46,17 @@ describe('snapshot', () => {
         const writtenMessages = fileContent.toString().split('\n').filter(line => line).map(line => JSON.parse(line))
 
         expect(writtenMessages).to.deep.equal([{attachmentId: '3'}, {attachmentId: '4'}, {attachmentId: '5'}])
+      })
+
+      it('should write labels', async () => {
+        const labels: Label[] = [{id: '1'}, {id: '2'}]
+        const snapshotWriter = await snapshotBuilder.getSnapshotWriter(account)
+
+        await snapshotWriter.writeLabels(labels)
+
+        const fileContent = await fs.readFile(`${expectedSnapshotDir}/labels.ndjson`)
+        const writtenLabels = fileContent.toString().split('\n').filter(line => line).map(line => JSON.parse(line))
+        expect(writtenLabels).to.deep.equal(labels)
       })
     })
   })
