@@ -134,6 +134,17 @@ describe('gmail', () => {
         ])
       })
     })
+
+    describe('getLabels', async () => {
+      it('should return labels', async () => {
+        const labels = [{id: '1'}, {id: '2'}]
+        const gmail = new Gmail({users: {labels: {list: async () => ({data: {labels}})}}} as any)
+
+        const response = await gmail.getLabels()
+
+        expect(response).to.deep.equal(labels)
+      })
+    })
   })
 
   describe('toGmail', () => {

@@ -1,7 +1,7 @@
 import fs from 'node:fs'
-import {Message, MessageWithAttachments} from '../google/gmail'
+import {Label, Message, MessageWithAttachments} from '../google/gmail'
 import {Writable} from 'node:stream'
-import {WritableStream, TransformStream} from 'node:stream/web'
+import {TransformStream, WritableStream} from 'node:stream/web'
 import {QUEUING_STRATEGY, readLastLine} from '../common'
 import dayjs from 'dayjs'
 import utc from 'dayjs/plugin/utc'
@@ -13,20 +13,39 @@ function accountToDir(account: string) {
   return account.replace('@', '_at_')
 }
 
+interface SnapshotWriter {
+  messageWithAttachments: WritableStream<MessageWithAttachments>;
+  writeLabels: (labels: Label[]) => Promise<void>
+}
+
 export class SnapshotBuilder {
   private readonly now: string
-
   constructor() {
     this.now = dayjs.utc().format('YYYY-MM-DD_HH-mm-ss-SSS')
   }
 
   async getSnapshotWriter(
     account: string, onMessageSave?: (count: number) => void,
-  ): Promise<WritableStream<MessageWithAttachments>> {
-    const dir = getSnapshotPath(this.now, accountToDir(account))
+  ): Promise<SnapshotWriter> {
+    const accountDir = accountToDir(account)
+    const dir = getSnapshotPath(this.now, accountDir)
     await fs.promises.mkdir(dir, {recursive: true})
-    const fileStream = Writable.toWeb(fs.createWriteStream(getMessagesPath(this.now, accountToDir(account))))
-    const attachmentsFile = await fs.promises.open(getAttachmentsPath(this.now, accountToDir(account)), 'w')
+
+    const messageWithAttachments = await this.prepareMessageWithAttachmentsWritable(accountDir, onMessageSave)
+
+    const writeLabels = async (labels: Label[]) => {
+      await fs.promises.writeFile(
+        getLabelsPath(this.now, accountDir),
+        labels.map(label => JSON.stringify(label)).join('\n'),
+      )
+    }
+
+    return {messageWithAttachments, writeLabels}
+  }
+
+  private async prepareMessageWithAttachmentsWritable(accountDir: string, onMessageSave?: (count: number) => void) {
+    const fileStream = Writable.toWeb(fs.createWriteStream(getMessagesPath(this.now, accountDir)))
+    const attachmentsFile = await fs.promises.open(getAttachmentsPath(this.now, accountDir), 'w')
     let savedMessages = 0
 
     const saveAttachments = new TransformStream<MessageWithAttachments, Message>({
@@ -93,4 +112,8 @@ function getMessagesPath(snapshot: string, account: string) {
 
 function getAttachmentsPath(snapshot: string, account: string) {
   return `${getSnapshotPath(snapshot, account)}/attachments.ndjson`
+}
+
+function getLabelsPath(snapshot: string, account: string) {
+  return `${getSnapshotPath(snapshot, account)}/labels.ndjson`
 }
