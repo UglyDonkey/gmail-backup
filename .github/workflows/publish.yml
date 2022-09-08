@@ -26,6 +26,7 @@ jobs:
           git config --global user.name "GitHub Actions"
 
       - run: yarn install --immutable --immutable-cache
+      - run: yarn run build
       - run: yarn publish --new-version "${{ inputs.version }}"
       - run: git push --all --follow-tags
 
@@ -53,15 +54,6 @@ jobs:
           tags: |
             uglydonkey/gmail-backup:${{ inputs.version }}
             uglydonkey/gmail-backup:latest
-
-      - name: Upload readme
-        uses: ms-jpq/sync-dockerhub-readme@v1
-        with:
-          username: ${{ secrets.DOCKER_USERNAME }}
-          password: ${{ secrets.DOCKER_PASSWORD }}
-          repository: uglydonkey/gmail-backup
-          readme: "./DOCKER_README.md"
-
 
   create-gh-release:
     runs-on: ubuntu-latest
