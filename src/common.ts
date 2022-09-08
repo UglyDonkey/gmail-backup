@@ -39,7 +39,7 @@ export async function readLastLine(path: string): Promise<string> {
       line = chunks.pop() ?? ''
     }
 
-    if (chunks.length > 0 && line) {
+    if ((chunks.length > 0 && line) || buffer.length < length) {
       break
     }
   }

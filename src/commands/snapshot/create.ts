@@ -4,7 +4,9 @@ import {toGmail} from '../../google/gmail'
 import {findLastSavedMessage, SnapshotBuilder} from '../../data/snapshot'
 
 export default class CreateSnapshot extends Command {
-  static description = 'creates new snapshot '
+  static description =
+    'Creates new incremental snapshot in configured directory. ' +
+    'It\'s meant to be run periodically (for example with cron).'
 
   async run(): Promise<void> {
     const gmails = (await prepareOAuthWithCredentials()).map(toGmail)
@@ -17,14 +19,18 @@ export default class CreateSnapshot extends Command {
         throw new Error('emailAddress must be defined')
       }
       CliUx.ux.info(`creating snapshot for ${profile.emailAddress}`)
+
+      const snapshotWriter = await snapshot.getSnapshotWriter(profile.emailAddress, count => progress.update(count))
+
+      const labels = await gmail.getLabels()
+      await snapshotWriter.writeLabels(labels)
+
       progress.start()
 
       const lastSavedMessage = await findLastSavedMessage(profile.emailAddress)
       const emailReader = gmail.getEmailReader(total => progress.setTotal(total), lastSavedMessage?.id ?? undefined)
 
-      const snapshotWriter = await snapshot.getSnapshotWriter(profile.emailAddress, count => progress.update(count))
-
-      await emailReader.pipeTo(snapshotWriter)
+      await emailReader.pipeTo(snapshotWriter.messageWithAttachments)
 
       progress.stop()
     }
