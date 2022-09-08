@@ -38,7 +38,7 @@ $ npm install -g gmail-backup
 $ gmail-backup COMMAND
 running command...
 $ gmail-backup (--version)
-gmail-backup/0.1.8 linux-x64 node-v18.8.0
+gmail-backup/0.2.0 linux-x64 node-v18.9.0
 $ gmail-backup --help [COMMAND]
 USAGE
   $ gmail-backup COMMAND
@@ -48,8 +48,6 @@ USAGE
 # Commands
 <!-- commands -->
 * [`gmail-backup help [COMMAND]`](#gmail-backup-help-command)
-* [`gmail-backup oauth`](#gmail-backup-oauth)
-* [`gmail-backup snapshot create`](#gmail-backup-snapshot-create)
 
 ## `gmail-backup help [COMMAND]`
 
@@ -70,30 +68,4 @@ DESCRIPTION
 ```
 
 _See code: [@oclif/plugin-help](https://github.com/oclif/plugin-help/blob/v5.1.12/src/commands/help.ts)_
-
-## `gmail-backup oauth`
-
-Setup your google account with oauth. It supports multiple accounts.
-
-```
-USAGE
-  $ gmail-backup oauth
-
-DESCRIPTION
-  Setup your google account with oauth. It supports multiple accounts.
-```
-
-_See code: [src/commands/oauth/index.ts](https://github.com/UglyDonkey/gmail-backup/blob/v0.1.8/src/commands/oauth/index.ts)_
-
-## `gmail-backup snapshot create`
-
-Creates new incremental snapshot in configured directory. It's meant to be run periodically (for example with cron).
-
-```
-USAGE
-  $ gmail-backup snapshot create
-
-DESCRIPTION
-  Creates new incremental snapshot in configured directory. It's meant to be run periodically (for example with cron).
-```
 <!-- commandsstop -->
