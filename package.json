@@ -28,7 +28,7 @@
     "@types/chai-spies": "^1.0.3",
     "@types/mocha": "^9.1.1",
     "@types/mock-fs": "^4.13.1",
-    "@types/node": "^18.7.13",
+    "@types/node": "^18.8.2",
     "chai": "^4.3.4",
     "chai-spies": "^1.0.0",
     "eslint": "^7.32.0",
