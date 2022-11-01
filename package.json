@@ -19,7 +19,7 @@
   "dependencies": {
     "@oclif/core": "^1.16.0",
     "@oclif/plugin-help": "^5.1.12",
-    "dayjs": "^1.11.5",
+    "dayjs": "^1.11.6",
     "googleapis": "^105.0.0"
   },
   "devDependencies": {
