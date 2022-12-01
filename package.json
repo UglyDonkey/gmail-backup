@@ -18,7 +18,7 @@
   ],
   "dependencies": {
     "@oclif/core": "^1.16.0",
-    "@oclif/plugin-help": "^5.1.12",
+    "@oclif/plugin-help": "^5.1.19",
     "dayjs": "^1.11.5",
     "googleapis": "^105.0.0"
   },
