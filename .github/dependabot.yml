@@ -12,6 +12,4 @@ updates:
       separator: "-"
     ignore:
       - dependency-name: "fs-extra"
-      - dependency-name: "*"
-        update-types: ["version-update:semver-major"]
     target-branch: develop
