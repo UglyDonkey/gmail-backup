@@ -38,7 +38,7 @@ $ npm install -g gmail-backup
 $ gmail-backup COMMAND
 running command...
 $ gmail-backup (--version)
-gmail-backup/0.2.1 linux-x64 node-v18.9.0
+gmail-backup/0.2.2 linux-x64 node-v18.14.1
 $ gmail-backup --help [COMMAND]
 USAGE
   $ gmail-backup COMMAND
@@ -83,7 +83,7 @@ DESCRIPTION
   Setup your google account with oauth. It supports multiple accounts.
 ```
 
-_See code: [src/commands/oauth/index.ts](https://github.com/UglyDonkey/gmail-backup/blob/v0.2.1/src/commands/oauth/index.ts)_
+_See code: [src/commands/oauth/index.ts](https://github.com/UglyDonkey/gmail-backup/blob/v0.2.2/src/commands/oauth/index.ts)_
 
 ## `gmail-backup snapshot create`
 
