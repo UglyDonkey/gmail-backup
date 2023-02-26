@@ -2225,10 +2225,10 @@ file-entry-cache@^6.0.1:
   dependencies:
     flat-cache "^3.0.4"
 
-file-lines-stream@^0.1.0:
-  version "0.1.0"
-  resolved "https://registry.yarnpkg.com/file-lines-stream/-/file-lines-stream-0.1.0.tgz#a646d000a3eaf80f4e419f173b5976049f4244a9"
-  integrity sha512-Mpst4IgegTJo6FZZ7vhf8l3nXci7DgIvyg3GJLGfgItKR5V/0kGo5wA0gy+YpKTTcGFu2k/z7ALORxFfOot6og==
+file-lines-stream@0.2.0:
+  version "0.2.0"
+  resolved "https://registry.yarnpkg.com/file-lines-stream/-/file-lines-stream-0.2.0.tgz#dd728e5dd1724d8b87b55b5337052086f468e4c5"
+  integrity sha512-GjGqlKpKLZrJbYvf4ckMn0Dfg/lqhCNN4HzHvNCl4MV3VNINB/0hhvc7e+v5KHH2art94GRlw3Iq8RiHQK1Gjw==
 
 filelist@^1.0.1:
   version "1.0.2"

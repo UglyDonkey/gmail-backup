@@ -20,7 +20,7 @@
     "@oclif/core": "^1.16.0",
     "@oclif/plugin-help": "^5.1.12",
     "dayjs": "^1.11.5",
-    "file-lines-stream": "^0.1.0",
+    "file-lines-stream": "0.2.0",
     "googleapis": "^105.0.0"
   },
   "devDependencies": {
